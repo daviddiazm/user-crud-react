@@ -69,7 +69,7 @@ function App() {
       password: form.passwordId.value,
       birthday: form.birthdayId.value
     }
-    // form.reset();
+    form.reset();
     if (idUserUpdate) {
       await updateUser(idUserUpdate, dataForm)
     } else {
@@ -99,36 +99,38 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div className='app'>
 
-    <form className='formUser' onSubmit={handleSubmit} ref={formRef}>
-      <h2>{idUserUpdate ? "Edit" : "Create"} User</h2>
-      <label htmlFor="firstNameId">First name: </label>
-      <input type="text" name='firstName' id='firstNameId'/>
+      <form className='formUser' onSubmit={handleSubmit} ref={formRef}>
+        <h2>{idUserUpdate ? "Edit" : "Create"} User</h2>
+        <label htmlFor="firstNameId">First name: </label>
+        <input type="text" name='firstName' id='firstNameId' />
 
-      <label htmlFor="lastNameId">Last name: </label>
-      <input type="text" name='lastName' id='lastNameId'/>
+        <label htmlFor="lastNameId">Last name: </label>
+        <input type="text" name='lastName' id='lastNameId' />
 
-      <label htmlFor="emailId">Email name: </label>
-      <input type="email" name='email' id='emailId'/>
+        <label htmlFor="emailId">Email name: </label>
+        <input type="email" name='email' id='emailId' />
 
-      <label htmlFor="passwordId">Password: </label>
-      <input type="password" name='password' id='passwordId' />
+        <label htmlFor="passwordId">Password: </label>
+        <input type="password" name='password' id='passwordId' />
 
-      <label htmlFor="birthdayId">Birthday: </label>
-      <input type="date" name='birthday' id='birthdayId'/>
+        <label htmlFor="birthdayId">Birthday: </label>
+        <input type="date" name='birthday' id='birthdayId' />
 
-      <button type="submit">{idUserUpdate ? "Edit" : "Create"} User</button>
-    </form>
+        <button type="submit">{idUserUpdate ? "Edit" : "Create"} User</button>
+      </form>
 
       <section>
         <h2>User list</h2>
-        {users.map((user) => (
-          <UserCard key={user.id} user={user} deleteUser={deleteUser} loadUserForm={loadUserForm}/>
-        ))}
+        <article className='userlist__componente'>
+          {users.map((user) => (
+            <UserCard key={user.id} user={user} deleteUser={deleteUser} loadUserForm={loadUserForm} />
+          ))}
+        </article>
       </section>
 
-    </>
+    </div>
   )
 }
 
