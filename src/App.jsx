@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import axios from 'axios';
 import UserCard from './components/UserCard';
 
-// const BASE_URL = "https://user-crud-swln.onrender.com";
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://user-crud-swln.onrender.com";
+// const BASE_URL = "http://localhost:8080";
 
 function App() {
   const [users, setUsers] = useState([])
+  const [idUserUpdate, setIdUserUpdate] = useState(null);
+  const formRef = useRef(null);
 
   const getUser = async () => {
     try {
@@ -38,6 +40,15 @@ function App() {
     }
   }
 
+  const updateUser = async (userId, userData) => {
+    try {
+      await axios.put(`${BASE_URL}/users/${userId}`, userData)
+      console.log(`El usuario editado fue ${userId}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const loadUsers = async () => {
     try {
       const loadUser = await getUser();
@@ -48,6 +59,7 @@ function App() {
   }
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     const form = e.target;
 
     const dataForm = {
@@ -57,15 +69,29 @@ function App() {
       password: form.passwordId.value,
       birthday: form.birthdayId.value
     }
-    e.preventDefault();
     // form.reset();
-    console.log(dataForm);
+    if (idUserUpdate) {
+      await updateUser(idUserUpdate, dataForm)
+    } else {
+      await createUser(dataForm);
+    }
 
-    await createUser(dataForm);
+    setIdUserUpdate(null);
+
     await loadUsers();
-    // console.log(e);
-    // console.log(form);
-    // console.log(form.firstNameId);
+  }
+
+  const loadUserForm = (userData) => {
+    const $form = formRef.current;
+    // console.log($form.emailId);
+    console.log(userData);
+    $form.firstName.value = userData.first_name
+    $form.lastName.value = userData.last_name
+    $form.email.value = userData.email
+    $form.password.value = userData.password
+    $form.birthday.value = userData.birthday
+
+    setIdUserUpdate(userData.id);
   }
 
   useEffect(() => {
@@ -75,7 +101,8 @@ function App() {
   return (
     <>
 
-    <form className='formUser' onSubmit={handleSubmit}>
+    <form className='formUser' onSubmit={handleSubmit} ref={formRef}>
+      <h2>{idUserUpdate ? "Edit" : "Create"} User</h2>
       <label htmlFor="firstNameId">First name: </label>
       <input type="text" name='firstName' id='firstNameId'/>
 
@@ -91,13 +118,13 @@ function App() {
       <label htmlFor="birthdayId">Birthday: </label>
       <input type="date" name='birthday' id='birthdayId'/>
 
-      <button type="submit">Create User</button>
+      <button type="submit">{idUserUpdate ? "Edit" : "Create"} User</button>
     </form>
 
       <section>
         <h2>User list</h2>
         {users.map((user) => (
-          <UserCard key={user.id} user={user} deleteUser={deleteUser} />
+          <UserCard key={user.id} user={user} deleteUser={deleteUser} loadUserForm={loadUserForm}/>
         ))}
       </section>
 
