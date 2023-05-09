@@ -67,3 +67,9 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.formUser {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
